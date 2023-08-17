@@ -20,9 +20,10 @@ public class App{
         final String ERROR_MSG = String.format("\t%s%s%s\n", COLOR_RED_BOLD, "%s", RESET);
         final String SUCCESS_MSG = String.format("\t%s%s%s\n", COLOR_GREEN_BOLD, "%s", RESET);
 
-        String[] accountId= new String[0];
-        String[] custNames = new String[0];
-        int[] depositAmount = new int[0];
+        String[][] custDetails = new String[0][0];
+        // String[] accountId= new String[0];
+        // String[] custNames = new String[0];
+        // int[] depositAmount = new int[0];
 
         String screen = DASHBOARD;
 
@@ -59,15 +60,15 @@ public class App{
                 case CREATE_NEW_ACCOUNT:
 
                     // ID Validation
-                    String[] tempId = new String[accountId.length+1];
+                    String[] tempId = new String[custDetails[0].length > 0 ? custDetails[0].length+1 : 1];
 
-                    String accountIdName = String.format("SDB%05d ", (accountId.length + 1));
-                    for(int i = 0;i<accountId.length;i++){
-                        tempId[i] = accountId[i];
+                    String accountIdName = String.format("SDB%05d ", (custDetails[0].length + 1));
+                    for(int i = 0;i<custDetails[0].length;i++){
+                        tempId[i] = custDetails[0][i];
                     }
                     tempId[tempId.length-1]=accountIdName;
-                    accountId=tempId;
-                    System.out.println("New Account ID : "+accountIdName);
+                    custDetails[0]=tempId;
+                    System.out.println("New Account ID : " + accountIdName);
 
                     // Name Validation
 
@@ -79,7 +80,7 @@ public class App{
 
                         if(name.isBlank()){
                             System.out.printf(ERROR_MSG,"Name Cant be Empty");
-                            continue;
+                            continue loop;
                         } 
 
                         for (int i = 0; i < name.length(); i++) {
@@ -93,13 +94,13 @@ public class App{
 
                     }while(true);
 
-                    String[] tempCustNames = new String[custNames.length+1];
+                    String[] tempCustNames = new String[custDetails[1].length+1];
 
-                    for(int i = 0;i<custNames.length;i++){
-                        tempCustNames[i]=custNames[i];
+                    for(int i = 0;i<custDetails[1].length;i++){
+                        tempCustNames[i]=custDetails[1][i];
                     }
                     tempCustNames[tempCustNames.length-1]=name;
-                    custNames=tempCustNames;
+                    custDetails[1]=tempCustNames;
 
                     //Initial Deposit
                     boolean valid;
@@ -117,9 +118,9 @@ public class App{
 
                     }while(!valid);
 
-                    int[] tepmDeposit = new int[depositAmount.length+1];
-                    for(int i =0;i<depositAmount.length;i++){
-                        tepmDeposit[i]=depositAmount[i];
+                    int[] tepmDeposit = new int[custDetails[2].length+1];
+                    for(int i =0;i<custDetails[2].length;i++){
+                        tepmDeposit[i]= Integer.valueOf(custDetails[2][i]);
                     }
                     tepmDeposit[tepmDeposit.length-1] = initialDeposit;
                     System.out.println();
