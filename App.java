@@ -20,7 +20,7 @@ public class App{
         final String ERROR_MSG = String.format("\t%s%s%s\n", COLOR_RED_BOLD, "%s", RESET);
         final String SUCCESS_MSG = String.format("\t%s%s%s\n", COLOR_GREEN_BOLD, "%s", RESET);
 
-        String[][] custDetails = new String[0][0];
+        String[][] custDetails = {{}, {}, {}};
         // String[] accountId= new String[0];
         // String[] custNames = new String[0];
         // int[] depositAmount = new int[0];
