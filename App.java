@@ -20,10 +20,7 @@ public class App{
         final String ERROR_MSG = String.format("\t%s%s%s\n", COLOR_RED_BOLD, "%s", RESET);
         final String SUCCESS_MSG = String.format("\t%s%s%s\n", COLOR_GREEN_BOLD, "%s", RESET);
 
-        String[][] custDetails = {{}, {}, {}};
-        // String[] accountId= new String[0];
-        // String[] custNames = new String[0];
-        // int[] depositAmount = new int[0];
+        String[][] custDetails = new String[0][];
 
         String screen = DASHBOARD;
 
@@ -32,6 +29,7 @@ public class App{
 
             System.out.println(CLEAR);
             System.out.println("\t" + APP_TITLE + "\n");
+
             switch(screen){
                 case DASHBOARD:
                     System.out.println("\t[1]. Create New Account");
@@ -42,6 +40,7 @@ public class App{
                     System.out.println("\t[6]. Drop Existing Account");
                     System.out.println("\t[7]. Exit\n");
                     System.out.print("\tEnter an option to continue: ");
+
                     int option = SCANNER.nextInt();
                     SCANNER.nextLine();
 
@@ -58,73 +57,108 @@ public class App{
                     break;
 
                 case CREATE_NEW_ACCOUNT:
+                    String id;
+                    String name;
+                    double deposite;
+                    boolean valid = true;
+                    
 
-                    // ID Validation
-                    String[] tempId = new String[custDetails[0].length > 0 ? custDetails[0].length+1 : 1];
+                    // ID Validation                    
+                    idValidation:
+                    do {
+                        valid = true;
+                        System.out.print("\tEnter Customer ID: ");
+                        id = SCANNER.nextLine().strip();
 
-                    String accountIdName = String.format("SDB%05d ", (custDetails[0].length + 1));
-                    for(int i = 0;i<custDetails[0].length;i++){
-                        tempId[i] = custDetails[0][i];
-                    }
-                    tempId[tempId.length-1]=accountIdName;
-                    custDetails[0]=tempId;
-                    System.out.println("New Account ID : " + accountIdName);
+                        /* Empty */
+                        if (id.isEmpty()) {
+                            valid = false;
+                            System.out.printf(ERROR_MSG, "ID Can't be empty");
+                            continue idValidation;
+                        }
+
+                        /* Format */
+                        if (!id.startsWith("SDB-") || id.length() != 9) {
+                            valid = false;
+                            System.out.printf(ERROR_MSG, "Invalid ID format");
+                            continue idValidation;
+
+                        } else {
+                            // SDB-xxxxx => x
+                            String numberPart = id.substring(5);
+                            for (int i = 0; i < numberPart.length(); i++) {
+                                if (!Character.isDigit(numberPart.charAt(i))) {
+                                    valid = false;
+                                    System.out.printf(ERROR_MSG, "Invalid ID format");
+                                    continue idValidation;
+                                }
+                            }
+                        }
+
+                        /* Already Exists */
+                        for (int row = 0; row < custDetails.length; row++) {
+                            if (custDetails[row][0].equals(id)) {
+                                valid = false;
+                                System.out.printf(ERROR_MSG, "Student ID already exists");
+                                continue idValidation;
+                            }
+                        }
+
+                    } while (!valid);
 
                     // Name Validation
-
-                    String name;                 
-                    loop:
+                
+                    nameValidation:
                     do{
-                        System.out.print("Enter Customer Name : ");
+                        System.out.print("\tEnter Customer Name : ");
                         name = SCANNER.nextLine().strip();
 
                         if(name.isBlank()){
                             System.out.printf(ERROR_MSG,"Name Cant be Empty");
-                            continue loop;
+                            continue nameValidation;
                         } 
 
                         for (int i = 0; i < name.length(); i++) {
                             if (!(Character.isLetter(name.charAt(i)) || 
                                 Character.isSpaceChar(name.charAt(i))) ) {
                                 System.out.printf(ERROR_MSG, "Invalid Customer name");
-                                continue loop;
+                                continue nameValidation;
                             }
                         }
                         break;
 
                     }while(true);
 
-                    String[] tempCustNames = new String[custDetails[1].length+1];
-
-                    for(int i = 0;i<custDetails[1].length;i++){
-                        tempCustNames[i]=custDetails[1][i];
-                    }
-                    tempCustNames[tempCustNames.length-1]=name;
-                    custDetails[1]=tempCustNames;
-
                     //Initial Deposit
-                    boolean valid;
-                    int initialDeposit;
                     do{
                         valid =true;
-                        System.out.print("Enter your Initial Deposit : ");
-                        initialDeposit = SCANNER.nextInt();
+                        System.out.print("\tEnter your Initial Deposit : ");
+                        deposite = SCANNER.nextInt();
                         SCANNER.nextLine();
 
-                        if(initialDeposit<5000){
+                        if(deposite<5000){
                             System.out.printf(ERROR_MSG,"Insufficient Ammount");
                             valid=false;
                         }
 
                     }while(!valid);
 
-                    int[] tepmDeposit = new int[custDetails[2].length+1];
-                    for(int i =0;i<custDetails[2].length;i++){
-                        tepmDeposit[i]= Integer.valueOf(custDetails[2][i]);
-                    }
-                    tepmDeposit[tepmDeposit.length-1] = initialDeposit;
+                    String[][] tempCusDetails = new String[custDetails.length+1][3];
+
+                    for (int i = 0; i < custDetails.length; i++) {
+                        for(int j=0; j< custDetails[i].length; j++){
+                            tempCusDetails[i][j] = custDetails[i][j];
+                        }                                             
+                    }   
+                    
+                    tempCusDetails[tempCusDetails.length-1][0] = id;
+                    tempCusDetails[tempCusDetails.length-1][1] = name;
+                    tempCusDetails[tempCusDetails.length-1][2] = Double.toString(deposite);
+
+                    custDetails = tempCusDetails;
+
                     System.out.println();
-                    System.out.printf(SUCCESS_MSG, String.format("Account Number %s: %s has been saved successfully", accountIdName, name));
+                    System.out.printf(SUCCESS_MSG, String.format("Account Number %s: %s has been saved successfully", id, name));
                     System.out.print("Do you want to continue adding (Y/n)? ");
                     if (SCANNER.nextLine().strip().toUpperCase().equals("Y")) continue;
                     screen = DASHBOARD;
